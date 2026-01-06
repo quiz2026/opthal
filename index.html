@@ -97,7 +97,7 @@ if(sel && parseInt(sel.value)===q.a) score++;
 const name=document.getElementById("username").value || "Candidate";
 const percent=((score/Q.length)*100).toFixed(1);
 
-fetch("https://script.google.com/macros/s/AKfycbxwnzGxABTHVPuce6TauEFi5QnCcr4vgYKmpIjpCStUe_MVmQIItkl9fsx2qa69kKnxiw/exec",{
+fetch("https://script.google.com/macros/s/AKfycbwEucID2VzjXRzaj6uuXA4UMRDv51ti9LY1RsaH84MkaLXd8s-fuXT95_jQGXRcEgFTuw/exec",{
 method:"POST",
 headers:{ "Content-Type":"application/json" },
 body:JSON.stringify({
@@ -124,4 +124,5 @@ document.querySelectorAll("input[type=radio]").forEach(r=>r.disabled=true);
 
 </body>
 </html>
+
 
