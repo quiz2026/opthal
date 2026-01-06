@@ -97,18 +97,31 @@ if(sel && parseInt(sel.value)===q.a) score++;
 const name=document.getElementById("username").value || "Candidate";
 const percent=((score/Q.length)*100).toFixed(1);
 
+fetch("https://script.google.com/macros/s/AKfycbxwnzGxABTHVPuce6TauEFi5QnCcr4vgYKmpIjpCStUe_MVmQIItkl9fsx2qa69kKnxiw/exec",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({
+name:name,
+score:score,
+total:Q.length,
+percent:percent
+})
+});
+
 document.getElementById("result").innerHTML=`
 <div class="result-box">
 <h3>📊 Result</h3>
 <b>Name:</b> ${name}<br>
-<b>Score:</b> ${score} / ${Q.length}<br>
+<b>Score:</b> ${score}/${Q.length}<br>
 <b>Percentage:</b> ${percent} %
 </div>
 `;
 
 document.querySelectorAll("input[type=radio]").forEach(r=>r.disabled=true);
 }
+
 </script>
 
 </body>
 </html>
+
