@@ -14,6 +14,9 @@ label{display:block;margin:6px 0;cursor:pointer}
 .correct{color:green;font-weight:bold}
 .wrong{color:red;font-weight:bold}
 hr{margin:25px 0}
+input[type="text"]{padding:6px;width:250px}
+button{padding:8px 16px;font-size:15px;cursor:pointer}
+.result-box{background:#eef6ff;padding:15px;border-radius:6px;margin-top:20px}
 </style>
 </head>
 
@@ -21,163 +24,53 @@ hr{margin:25px 0}
 
 <div class="quiz">
 <h2>👁️ NEET-PG Ophthalmology PYQs (2018–2025)</h2>
+
+<!-- NAME INPUT -->
+<p>
+<b>Enter Name:</b><br>
+<input type="text" id="username" placeholder="Your name">
+</p>
+
 <div id="quiz"></div>
+
+<button onclick="submitQuiz()">Submit Quiz</button>
+
+<div id="result"></div>
 </div>
 
 <script>
 const Q = [
-
-/* ---------------- IMAGE BASED ---------------- */
-
-{img:"Retinitis-pigmentosa.webp",
-q:"Identify the fundus picture shown:",
-o:["Diabetic retinopathy","Retinitis pigmentosa","CRAO","Hypertensive retinopathy"],
-a:1,t:"Retina"},
-
-{img:"unnamed.png",
-q:"White pupillary reflex in this child suggests:",
-o:["Congenital cataract","Retinoblastoma","PHPV","Coats disease"],
-a:1,t:"Pediatric Ophthalmology"},
-
-{img:"unnamed(1).png",
-q:"The ocular deviation seen is:",
-o:["Esotropia","Exotropia","Hypertropia","Pseudo-strabismus"],
-a:1,t:"Squint"},
-
-{img:"Diseases-of-Lens.webp",
-q:"The lens opacity shown is:",
-o:["Posterior subcapsular cataract","Sunflower cataract","Traumatic cataract","Nuclear sclerosis"],
-a:1,t:"Lens"},
-
-{img:"unnamed(2).png",
-q:"The corneal condition shown is:",
-o:["Keratoconus","PMD","Fuchs dystrophy","Corneal scar"],
-a:0,t:"Cornea"},
-
-/* ---------------- NEURO-OPHTHAL ---------------- */
-
-{q:"Loss of vision in right halves of both eyes indicates lesion at:",
-o:["Left optic tract","Optic chiasma","Right optic nerve","Right visual cortex"],
-a:0,t:"Neuro-ophthalmology"},
-
-{q:"Photostress test helps differentiate:",
-o:["Macular vs optic nerve disease","Lens vs cornea","Glaucoma vs cataract","Retina vs vitreous"],
-a:0,t:"Neuro-ophthalmology"},
-
-{q:"Argyll Robertson pupil shows:",
-o:["React no accommodate","Accommodate no react","Neither","Both"],
-a:1,t:"Neuro-ophthalmology"},
-
-/* ---------------- GLAUCOMA ---------------- */
-
-{q:"Infant with photophobia, watering, enlarged cornea has:",
-o:["Ophthalmia neonatorum","Congenital glaucoma","Cataract","MPS"],
-a:1,t:"Glaucoma"},
-
-{q:"Drug increasing uveoscleral outflow:",
-o:["Timolol","Latanoprost","Pilocarpine","Acetazolamide"],
-a:1,t:"Glaucoma"},
-
-{q:"100-day glaucoma is seen after:",
-o:["CRVO","CRAO","Eales disease","Steroid use"],
-a:0,t:"Glaucoma"},
-
-{q:"Pseudo-exfoliation syndrome shows:",
-o:["White flaky deposits","Hypopyon","Ptosis","Corneal edema"],
-a:0,t:"Glaucoma"},
-
-/* ---------------- CORNEA ---------------- */
-
-{q:"Corneal hydration is maintained by:",
-o:["Epithelium","Stroma","Endothelium","Descemet membrane"],
-a:2,t:"Cornea"},
-
-{q:"Characteristic feature of fungal corneal ulcer:",
-o:["Dendritic ulcer","Ring abscess","Reverse hypopyon","Satellite lesions"],
-a:3,t:"Cornea"},
-
-{q:"Dye & filter used for corneal ulcer examination:",
-o:["Rose bengal","Fluorescein + green","Fluorescein + cobalt blue","Lissamine green"],
-a:2,t:"Cornea"},
-
-/* ---------------- CONJUNCTIVA ---------------- */
-
-{q:"Extra eyelashes behind grey line is called:",
-o:["Trichiasis","Distichiasis","Madarosis","Tylosis"],
-a:1,t:"Conjunctiva"},
-
-{q:"Angular conjunctivitis is caused by:",
-o:["Moraxella","Chlamydia","Adenovirus","Staph"],
-a:0,t:"Conjunctiva"},
-
-{q:"Most common cause of ophthalmia neonatorum (developed countries):",
-o:["Gonorrhea","Chlamydia","Chemical","Staph"],
-a:1,t:"Conjunctiva"},
-
-/* ---------------- ORBIT ---------------- */
-
-{q:"Most common site of blow-out fracture:",
-o:["Roof","Lateral wall","Medial wall","Floor"],
-a:3,t:"Orbit"},
-
-{q:"Euthyroid bilateral proptosis suggests:",
-o:["Orbital cellulitis","Pseudotumor","Thyroid eye disease","Lymphoma"],
-a:2,t:"Orbit"},
-
-/* ---------------- RETINA ---------------- */
-
-{q:"White pupillary reflex with Flexner-Wintersteiner rosettes is:",
-o:["Astrocytoma","Medulloblastoma","Retinoblastoma","Rhabdomyosarcoma"],
-a:2,t:"Retina"},
-
-{q:"Roth spots are seen in:",
-o:["Acute leukemia","Uveal melanoma","Lymphoma","All"],
-a:0,t:"Retina"},
-
-{q:"Shifting fluid sign is seen in:",
-o:["CSR","Retinal detachment","Vitreous hemorrhage","Macular hole"],
-a:1,t:"Retina"},
-
-/* ---------------- LENS ---------------- */
-
-{q:"Painful eye with hypopyon 36 hours after cataract surgery – management:",
-o:["IV steroids","IV antibiotics","Eye padding","Intravitreal antibiotics"],
-a:3,t:"Lens"},
-
-{q:"Sunflower cataract is seen in:",
-o:["Wilson disease","Diabetes","Trauma","Steroid use"],
-a:0,t:"Lens"},
-
-/* ---------------- UVEA / SCLERA ---------------- */
-
-{q:"RA patient with painless scleral thinning has:",
-o:["Scleromalacia perforans","Staphyloma","Coloboma","Melanoma"],
-a:0,t:"Sclera"},
-
-{q:"Sympathetic ophthalmia causes:",
-o:["Anterior uveitis","Pars planitis","Panuveitis","Posterior uveitis"],
-a:2,t:"Uvea"},
-
-/* ---------------- SQUINT ---------------- */
-
-{q:"Yoke muscle of right lateral rectus in dextroversion:",
-o:["Left superior oblique","Left medial rectus","Left inferior rectus","Right superior rectus"],
-a:1,t:"Squint"},
-
-/* ---------------- OPTICS ---------------- */
-
-{q:"Instrument used to dissociate heterophoria:",
-o:["Maddox wing","Maddox glass","Maddox rod","Phoropter"],
-a:2,t:"Optics"},
-
-{q:"Astigmatism produces:",
-o:["Point focus","Line focus","Circle of least confusion","No focus"],
-a:1,t:"Optics"},
-
-{q:"Presbyopia is corrected by:",
-o:["Convex lens","Concave lens","Cylindrical lens","Prism"],
-a:0,t:"Optics"}
-
+{img:"Retinitis-pigmentosa.webp",q:"Identify the fundus picture shown:",o:["Diabetic retinopathy","Retinitis pigmentosa","CRAO","Hypertensive retinopathy"],a:1,t:"Retina"},
+{img:"unnamed.png",q:"White pupillary reflex in this child suggests:",o:["Congenital cataract","Retinoblastoma","PHPV","Coats disease"],a:1,t:"Pediatric Ophthalmology"},
+{img:"unnamed(1).png",q:"The ocular deviation seen is:",o:["Esotropia","Exotropia","Hypertropia","Pseudo-strabismus"],a:1,t:"Squint"},
+{img:"Diseases-of-Lens.webp",q:"The lens opacity shown is:",o:["Posterior subcapsular cataract","Sunflower cataract","Traumatic cataract","Nuclear sclerosis"],a:1,t:"Lens"},
+{img:"unnamed(2).png",q:"The corneal condition shown is:",o:["Keratoconus","PMD","Fuchs dystrophy","Corneal scar"],a:0,t:"Cornea"},
+{q:"Loss of vision in right halves of both eyes indicates lesion at:",o:["Left optic tract","Optic chiasma","Right optic nerve","Right visual cortex"],a:0,t:"Neuro-ophthalmology"},
+{q:"Photostress test helps differentiate:",o:["Macular vs optic nerve disease","Lens vs cornea","Glaucoma vs cataract","Retina vs vitreous"],a:0,t:"Neuro-ophthalmology"},
+{q:"Argyll Robertson pupil shows:",o:["React no accommodate","Accommodate no react","Neither","Both"],a:1,t:"Neuro-ophthalmology"},
+{q:"Infant with photophobia, watering, enlarged cornea has:",o:["Ophthalmia neonatorum","Congenital glaucoma","Cataract","MPS"],a:1,t:"Glaucoma"},
+{q:"Drug increasing uveoscleral outflow:",o:["Timolol","Latanoprost","Pilocarpine","Acetazolamide"],a:1,t:"Glaucoma"},
+{q:"100-day glaucoma is seen after:",o:["CRVO","CRAO","Eales disease","Steroid use"],a:0,t:"Glaucoma"},
+{q:"Pseudo-exfoliation syndrome shows:",o:["White flaky deposits","Hypopyon","Ptosis","Corneal edema"],a:0,t:"Glaucoma"},
+{q:"Corneal hydration is maintained by:",o:["Epithelium","Stroma","Endothelium","Descemet membrane"],a:2,t:"Cornea"},
+{q:"Characteristic feature of fungal corneal ulcer:",o:["Dendritic ulcer","Ring abscess","Reverse hypopyon","Satellite lesions"],a:3,t:"Cornea"},
+{q:"Dye & filter used for corneal ulcer examination:",o:["Rose bengal","Fluorescein + green","Fluorescein + cobalt blue","Lissamine green"],a:2,t:"Cornea"},
+{q:"Extra eyelashes behind grey line is called:",o:["Trichiasis","Distichiasis","Madarosis","Tylosis"],a:1,t:"Conjunctiva"},
+{q:"Angular conjunctivitis is caused by:",o:["Moraxella","Chlamydia","Adenovirus","Staph"],a:0,t:"Conjunctiva"},
+{q:"Most common cause of ophthalmia neonatorum (developed countries):",o:["Gonorrhea","Chlamydia","Chemical","Staph"],a:1,t:"Conjunctiva"},
+{q:"Most common site of blow-out fracture:",o:["Roof","Lateral wall","Medial wall","Floor"],a:3,t:"Orbit"},
+{q:"Euthyroid bilateral proptosis suggests:",o:["Orbital cellulitis","Pseudotumor","Thyroid eye disease","Lymphoma"],a:2,t:"Orbit"},
+{q:"White pupillary reflex with Flexner-Wintersteiner rosettes is:",o:["Astrocytoma","Medulloblastoma","Retinoblastoma","Rhabdomyosarcoma"],a:2,t:"Retina"},
+{q:"Roth spots are seen in:",o:["Acute leukemia","Uveal melanoma","Lymphoma","All"],a:0,t:"Retina"},
+{q:"Shifting fluid sign is seen in:",o:["CSR","Retinal detachment","Vitreous hemorrhage","Macular hole"],a:1,t:"Retina"},
+{q:"Painful eye with hypopyon 36 hours after cataract surgery – management:",o:["IV steroids","IV antibiotics","Eye padding","Intravitreal antibiotics"],a:3,t:"Lens"},
+{q:"Sunflower cataract is seen in:",o:["Wilson disease","Diabetes","Trauma","Steroid use"],a:0,t:"Lens"},
+{q:"RA patient with painless scleral thinning has:",o:["Scleromalacia perforans","Staphyloma","Coloboma","Melanoma"],a:0,t:"Sclera"},
+{q:"Sympathetic ophthalmia causes:",o:["Anterior uveitis","Pars planitis","Panuveitis","Posterior uveitis"],a:2,t:"Uvea"},
+{q:"Yoke muscle of right lateral rectus in dextroversion:",o:["Left superior oblique","Left medial rectus","Left inferior rectus","Right superior rectus"],a:1,t:"Squint"},
+{q:"Instrument used to dissociate heterophoria:",o:["Maddox wing","Maddox glass","Maddox rod","Phoropter"],a:2,t:"Optics"},
+{q:"Astigmatism produces:",o:["Point focus","Line focus","Circle of least confusion","No focus"],a:1,t:"Optics"},
+{q:"Presbyopia is corrected by:",o:["Convex lens","Concave lens","Cylindrical lens","Prism"],a:0,t:"Optics"}
 ];
 
 const quiz=document.getElementById("quiz");
@@ -189,17 +82,31 @@ quiz.innerHTML+=`
 ${x.img?`<img src="${x.img}">`:""}
 ${x.o.map((v,j)=>`
 <label>
-<input type="radio" name="q${i}" onclick="ans(${i},${j})"> ${v}
+<input type="radio" name="q${i}" value="${j}"> ${v}
 </label>`).join("")}
-<div id="r${i}"></div>
 <hr>`;
 });
 
-function ans(i,j){
-document.getElementById("r"+i).innerHTML =
-(j===Q[i].a)
-? "<span class='correct'>✔ Correct</span>"
-: "<span class='wrong'>✘ Correct answer: "+Q[i].o[Q[i].a]+"</span>";
+function submitQuiz(){
+let score=0;
+Q.forEach((q,i)=>{
+const sel=document.querySelector('input[name="q'+i+'"]:checked');
+if(sel && parseInt(sel.value)===q.a) score++;
+});
+
+const name=document.getElementById("username").value || "Candidate";
+const percent=((score/Q.length)*100).toFixed(1);
+
+document.getElementById("result").innerHTML=`
+<div class="result-box">
+<h3>📊 Result</h3>
+<b>Name:</b> ${name}<br>
+<b>Score:</b> ${score} / ${Q.length}<br>
+<b>Percentage:</b> ${percent} %
+</div>
+`;
+
+document.querySelectorAll("input[type=radio]").forEach(r=>r.disabled=true);
 }
 </script>
 
