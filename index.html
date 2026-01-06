@@ -19,6 +19,20 @@ button{padding:8px 16px;font-size:15px;cursor:pointer}
 .result-box{background:#eef6ff;padding:15px;border-radius:6px;margin-top:20px}
 </style>
 </head>
+<!-- HIDDEN FORM FOR GOOGLE SHEETS -->
+<form id="resultForm"
+      action="https://script.google.com/macros/s/AKfycbwhPGOTmjWKrwLmJZWvzbH0ecwCgcgkOy8fJlCmqaK3gZQ-KI0oGt1OY-8W5_iUDeH9Bw/exec"
+      method="POST"
+      target="hiddenFrame">
+
+  <input type="hidden" name="name" id="f_name">
+  <input type="hidden" name="score" id="f_score">
+  <input type="hidden" name="total" id="f_total">
+  <input type="hidden" name="percent" id="f_percent">
+
+</form>
+
+<iframe name="hiddenFrame" style="display:none"></iframe>
 
 <body>
 
@@ -88,42 +102,44 @@ ${x.o.map((v,j)=>`
 });
 
 function submitQuiz(){
-let score=0;
-Q.forEach((q,i)=>{
-const sel=document.querySelector('input[name="q'+i+'"]:checked');
-if(sel && parseInt(sel.value)===q.a) score++;
-});
+  let score = 0;
 
-const name=document.getElementById("username").value || "Candidate";
-const percent=((score/Q.length)*100).toFixed(1);
+  Q.forEach((q,i)=>{
+    const sel = document.querySelector('input[name="q'+i+'"]:checked');
+    if(sel && parseInt(sel.value) === q.a) score++;
+  });
 
-fetch("https://script.google.com/macros/s/AKfycbxPAGrscx6JetrV6D83CSuiolOgsgq3HDLsdhvJv5qIrkOw1SvnRCgRLIXBlCNYOmNs5g/exec",{
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({
-name:name,
-score:score,
-total:Q.length,
-percent:percent
-})
-});
+  const name = document.getElementById("username").value || "Candidate";
+  const percent = ((score / Q.length) * 100).toFixed(1);
 
-document.getElementById("result").innerHTML=`
-<div class="result-box">
-<h3>📊 Result</h3>
-<b>Name:</b> ${name}<br>
-<b>Score:</b> ${score}/${Q.length}<br>
-<b>Percentage:</b> ${percent} %
-</div>
-`;
+  // 🔹 Fill hidden form fields
+  document.getElementById("f_name").value = name;
+  document.getElementById("f_score").value = score;
+  document.getElementById("f_total").value = Q.length;
+  document.getElementById("f_percent").value = percent;
 
-document.querySelectorAll("input[type=radio]").forEach(r=>r.disabled=true);
+  // 🔹 Submit form silently
+  document.getElementById("resultForm").submit();
+
+  // 🔹 Show result to user
+  document.getElementById("result").innerHTML = `
+    <div class="result-box">
+      <h3>📊 Result</h3>
+      <b>Name:</b> ${name}<br>
+      <b>Score:</b> ${score} / ${Q.length}<br>
+      <b>Percentage:</b> ${percent} %
+    </div>
+  `;
+
+  // 🔹 Lock answers
+  document.querySelectorAll("input[type=radio]").forEach(r => r.disabled = true);
 }
 
 </script>
 
 </body>
 </html>
+
 
 
 
