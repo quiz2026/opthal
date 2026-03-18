@@ -9,15 +9,15 @@
 
 body{
 font-family:Arial;
-padding:40px;
-max-width:600px;
+max-width:700px;
 margin:auto;
+padding:40px;
 }
 
-input,select{
+select,input{
+width:100%;
 padding:8px;
 margin:6px 0;
-width:100%;
 }
 
 button{
@@ -26,18 +26,23 @@ width:100%;
 background:#2c7be5;
 color:white;
 border:none;
+cursor:pointer;
 }
 
 .card{
-margin-top:20px;
-padding:15px;
 border:1px solid #ddd;
+padding:15px;
+margin-top:20px;
 border-radius:6px;
 }
 
+ul{
+padding-left:18px;
+}
+
 .result{
-font-size:18px;
-font-weight:bold;
+font-size:16px;
+line-height:1.6;
 }
 
 </style>
@@ -78,12 +83,22 @@ Spend Amount
 
 <input id="amount" type="number" placeholder="Enter spend">
 
-<button onclick="saveSpend()">Save Spend</button>
+<button onclick="saveSpend()">Add Spend</button>
+
+</div>
+
+<div class="card">
+
+<h3>Transactions</h3>
+
+<ul id="txnList"></ul>
 
 </div>
 
 <div class="card result" id="result">
+
 Loading data...
+
 </div>
 
 <script>
@@ -92,8 +107,11 @@ const API="https://script.google.com/macros/s/AKfycbzNFOCvpmagXsEAXMHwdEE1uW4XJF
 
 let spends=[];
 let allSpends=[];
+let monthlyTotals={};
 
 async function loadSpends(){
+
+let month=document.getElementById("month").value;
 
 let res=await fetch(API);
 
@@ -101,8 +119,9 @@ let data=await res.json();
 
 spends=[];
 allSpends=[];
+monthlyTotals={};
 
-let selectedMonth=document.getElementById("month").value;
+let listHTML="";
 
 data.forEach(row=>{
 
@@ -110,13 +129,23 @@ let amt=Number(row.amount);
 
 allSpends.push(amt);
 
-if(row.month===selectedMonth){
+if(!monthlyTotals[row.month]){
+monthlyTotals[row.month]=0;
+}
+
+monthlyTotals[row.month]+=amt;
+
+if(row.month===month){
 
 spends.push(amt);
+
+listHTML+="<li>₹"+amt+"</li>";
 
 }
 
 });
+
+document.getElementById("txnList").innerHTML=listHTML || "No transactions yet";
 
 calculate();
 
@@ -138,27 +167,55 @@ let annualTotal=allSpends.reduce((a,b)=>a+b,0);
 
 let remainingAnnual=Math.max(0,150000-annualTotal);
 
-let msg="";
+let twentyKMonths=0;
 
-if(type==="1500x4"){
+for(let m in monthlyTotals){
 
-msg+="Remaining ≥1500 transactions: "+remainingTxn;
+if(monthlyTotals[m]>=20000){
+twentyKMonths++;
+}
 
 }
+
+let remaining20K=Math.max(0,6-twentyKMonths);
+
+/* Best next spend suggestion */
+
+let nextSpend=0;
+
+if(count1500<4){
+
+nextSpend=1500;
+
+}else{
+
+nextSpend=remainingSpend;
+
+}
+
+let msg="";
+
+msg+="Transactions ≥1500: "+count1500+"/4<br>";
+
+msg+="Remaining ≥1500 transactions allowed: "+remainingTxn+"<br><br>";
 
 if(type==="20K"){
 
-msg+="Remaining ≥1500 transactions: "+remainingTxn;
+msg+="Remaining spend to ₹20000: ₹"+remainingSpend+"<br>";
 
-msg+="<br>Remaining spend to ₹20000: ₹"+remainingSpend;
+msg+="Best next spend suggestion: ₹"+nextSpend+"<br><br>";
 
 }
 
-msg+="<br><br>Monthly spend so far: ₹"+total;
+msg+="Monthly total: ₹"+total+"<br><br>";
 
-msg+="<br>Annual spend: ₹"+annualTotal;
+msg+="Annual spend: ₹"+annualTotal+"<br>";
 
-msg+="<br>Remaining to ₹150000: ₹"+remainingAnnual;
+msg+="Remaining to ₹150000: ₹"+remainingAnnual+"<br><br>";
+
+msg+="20K months completed: "+twentyKMonths+"/6<br>";
+
+msg+="20K months remaining: "+remaining20K;
 
 document.getElementById("result").innerHTML=msg;
 
@@ -175,9 +232,7 @@ let type=document.getElementById("type").value;
 let formData=new URLSearchParams();
 
 formData.append("month",month);
-
 formData.append("type",type);
-
 formData.append("amount",amount);
 
 await fetch(API,{
@@ -185,12 +240,9 @@ method:"POST",
 body:formData
 });
 
-spends.push(Number(amount));
-allSpends.push(Number(amount));
-
-calculate();
-
 document.getElementById("amount").value="";
+
+loadSpends();
 
 }
 
@@ -201,4 +253,5 @@ loadSpends();
 </script>
 
 </body>
+
 </html>
